@@ -1,3 +1,44 @@
+# Product Scraper
+
+This script scrapes product data from [Bergfreunde.de](https://www.bergfreunde.de) for a list of predefined categories.  
+It extracts product **brand, title, category, image URL, and price** from each category page.
+
+---
+
+## Features
+- Crawls multiple product categories (defined in `categories_map`)
+- Extracts:
+  - Brand name
+  - Product title
+  - Category
+  - Image URL
+  - Price (converted to float, e.g., `"€ 54,97"` → `54.97`)
+- Saves results into a `app/data/products.json` file
+- Adds delays between requests to avoid overloading the server
+
+## Usage
+1. Scrape Product Data
+
+First, run the crawler script to collect product information and images:
+
+python scripts/01_get_image_data.py
+
+
+This will create a products.json file in the app/data.
+
+Example entry in products.json:
+
+```
+{
+  "_id": "1",
+  "name": "Patagonia - Worn Wear Patch Kit Reparaturset",
+  "category": "Accessoires",
+  "price": 24.95,
+  "image_url": "https://www.bfgcdn.com/out/pictures/generated/product/1/215_215_90/sol_105-0503-0911_pic1_1.jpg"
+}
+```
+---
+
 # CLIP ONNX Exporter
 
 This script exports [OpenAI CLIP](https://huggingface.co/openai/clip-vit-base-patch32) models
