@@ -42,7 +42,7 @@ class MongoDBHandler:
 
     def get_product(self, product_id: int) -> Optional[Dict]:
         """
-        Find product by its _id.
+        Find product by its id.
 
         Args:
             product_id (int): Product ID.
@@ -50,7 +50,26 @@ class MongoDBHandler:
         Returns:
             Optional[Dict]: Product document if found, else None.
         """
-        return self.products.find_one({"_id": product_id})
+        return self.products.find_one({"id": product_id})
+    
+    def get_sample_ids(self, sample_size: int = 50) -> List[int]:
+        """
+        Randomly sample product IDs from the collection.
+
+        Args:
+            sample_size (int): Number of product IDs to sample.
+
+        Returns:
+            List[int]: List of randomly sampled product IDs.
+        """
+        # Use MongoDB aggregation with $sample to randomly pick documents
+        sample_docs = list(self.products.aggregate([
+            {"$sample": {"size": sample_size}},
+            {"$project": {"id": 1}}  # Only keep the 'id' field
+        ]))
+
+        # Extract 'id' values into a Python list
+        return [doc["id"] for doc in sample_docs]
 
     # ---------- Logging Methods ----------
     def _log(self, event: str, details: Dict) -> str:
