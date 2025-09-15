@@ -7,7 +7,8 @@ MODEL_DINO = "dinov2_vitb14"
 SAMPLE_SIZE = 10
 
 # (Optional) Triton Inference Server REST endpoint
-TRITON_URL = "http://localhost:8000/v2/models"
+TRITON_URL = "http://localhost:8000"
+TRITON_MODEL_NAME = "aligned"
 
 # (Optional) Vector dimensions (adjusted based on your exported CLIP encoder)
 EMBEDDING_DIM = 512
