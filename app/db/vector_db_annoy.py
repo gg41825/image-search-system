@@ -49,7 +49,7 @@ class AnnoyVectorDB:
 
         # Prepare texts
         texts = [f"{d.get('name')} ({d.get('category')})" for d in docs]
-        ids = [str(d.get("_id")) for d in docs]
+        ids = [str(d.get("id")) for d in docs]
 
         # Generate embeddings
         txt_emb = embedder.embed_texts(texts)
