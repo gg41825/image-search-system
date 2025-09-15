@@ -1,4 +1,4 @@
 venv/*
 .DS_Store
 *.pyc
-model_repository/aligned/1/model.onnx
+model_repository/*/1/model.onnx
