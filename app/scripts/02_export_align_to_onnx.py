@@ -25,7 +25,7 @@ dummy_pixel_values = torch.randn((1, 3, 224, 224)).to(device)
 # ------------------------
 # Export to ONNX
 # ------------------------
-onnx_path = "aligned_embedder.onnx"
+onnx_path = "model.onnx"
 
 torch.onnx.export(
     model,

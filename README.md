@@ -32,7 +32,23 @@ docker run -d \
 ```
 This will start MongoDB on localhost:27017.
 
-## 1-4. Run Triton Inference Server (CPU)
+## 1-4. Export Bert+Dino Model to a Combined Model (Aligned)
+```
+PYTHONPATH=app python3 app/scripts/02_export_align_to_onnx.py
+```
+Then moved the generated model.onnx under `model_repository/aligned/1`
+
+The structure should look like the following:
+```
+app/
+model_repository/
+  aligned/
+    1/
+      model.onnx
+    config.pbtxt
+```
+
+## 1-5. Run Triton Inference Server (CPU)
 Use the following command to start Triton and expose the HTTP, gRPC, and metrics ports:
 ```
 docker run --rm -it \
