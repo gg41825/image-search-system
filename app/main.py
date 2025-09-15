@@ -16,7 +16,7 @@ os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"
 
 
-def main(query_text: str, query_image_url: str, top_k: int):
+def main(query_text: str, query_image_url: str):
     # Init Mongo DB
     mongo = MongoDBHandler()
 
@@ -56,6 +56,7 @@ def main(query_text: str, query_image_url: str, top_k: int):
     query_combined = np.concatenate([query_vec, query_img_vec], axis=1)
 
     # Search
+    top_k = 1
     nn_indices, distances = index.get_nns_by_vector(
         query_combined[0].tolist(), top_k, include_distances=True
     )
@@ -82,9 +83,8 @@ def main(query_text: str, query_image_url: str, top_k: int):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Product Search with Text + Image query")
-    parser.add_argument("--query", type=str, required=True, help="Text query for product search")
-    parser.add_argument("--image", type=str, required=True, help="Image URL for product search")
-    parser.add_argument("--top_k", type=int, default=1, help="Number of nearest neighbors to return")
+    parser.add_argument("--query_text", type=str, required=True, help="Text query for product search")
+    parser.add_argument("--image_url", type=str, required=True, help="Image URL for product search")
 
     args = parser.parse_args()
-    main(query_text=args.query, query_image_url=args.image, top_k=args.top_k)
+    main(query_text=args.query_text, query_image_url=args.image_url)
