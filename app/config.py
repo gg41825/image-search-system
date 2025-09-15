@@ -1,0 +1,9 @@
+MONGO_URI = "mongodb://root:example@localhost:27017"
+MONGO_DB_NAME = "product_db"
+
+MODEL_BERT = "bert-base-uncased"
+# (Optional) Triton Inference Server REST endpoint
+TRITON_URL = "http://localhost:8000/v2/models"
+
+# (Optional) Vector dimensions (adjusted based on your exported CLIP encoder)
+EMBEDDING_DIM = 512
