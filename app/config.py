@@ -1,4 +1,4 @@
-MONGO_URI = "mongodb://root:example@localhost:27017"
+MONGO_URI = "mongodb://root:iamtestginny@localhost:27017"
 MONGO_DB_NAME = "product_db"
 
 MODEL_BERT = "bert-base-uncased"

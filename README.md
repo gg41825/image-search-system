@@ -24,15 +24,28 @@ pip install -r requirements.txt
 Start a MongoDB instance locally:
 ```
 docker pull mongo:7.0
-docker run -d \
-  --name mongodb \
+```
+```
+docker run -d --name mongodb \
   -p 27017:27017 \
-  -v mongo_data:/data/db \
+  -v ~/mongo_data:/data/db \
+  -e MONGO_INITDB_ROOT_USERNAME=root \
+  -e MONGO_INITDB_ROOT_PASSWORD=iamtestginny \
   mongo:7.0
 ```
 This will start MongoDB on localhost:27017.
 
-## 1-4. Export Bert+Dino Model to a Combined Model (Aligned)
+## 1-4. Run the Triton CPU Docker image
+Use the following command to pull and start Triton and expose the HTTP, gRPC, and metrics ports:
+
+```
+docker pull nvcr.io/nvidia/tritonserver:23.10-py3
+```
+```
+docker run --rm -it -p 8000:8000 -p 8001:8001 -p 8002:8002 -v "$(pwd)/model_repository:/models" nvcr.io/nvidia/tritonserver:23.10-py3 tritonserver --model-repository=/models --disable-auto-complete-config
+```
+
+## 1-5. Export Bert+Dino Model to a Combined Model (Aligned)
 ```
 PYTHONPATH=app python3 app/scripts/02_export_align_to_onnx.py
 ```
@@ -48,17 +61,6 @@ model_repository/
     config.pbtxt
 ```
 
-## 1-5. Run Triton Inference Server (CPU)
-Use the following command to start Triton and expose the HTTP, gRPC, and metrics ports:
-```
-docker run --rm -it \
-  -p 8000:8000 \
-  -p 8001:8001 \
-  -p 8002:8002 \
-  -v $(pwd)/model_repository:/models \
-  nvcr.io/nvidia/tritonserver:23.10-py3 \
-  tritonserver --model-repository=/models --disable-auto-complete-config
-```
 # 2. Run the Pipeline
 
 Run the main program with a text query and an image URL:
