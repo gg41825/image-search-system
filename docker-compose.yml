@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: sereact_mongodb
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=iamtestginny
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo_data:/data/db
+
+  triton:
+    image: nvcr.io/nvidia/tritonserver:23.10-py3
+    container_name: sereact_triton
+    restart: unless-stopped
+    command: >
+      tritonserver
+      --model-repository=/models
+      --disable-auto-complete-config
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+      - "8002:8002"
+    volumes:
+      - ./model_repository:/models
+
+  app:
+    build: ./app
+    container_name: sereact_app
+    environment:
+      - MONGO_URI=mongodb://root:iamtestginny@mongodb:27017
+      - TRITON_URL=triton:8001
+    volumes:
+      - ./app:/app
+    depends_on:
+      - mongodb
+      - triton
+    restart: unless-stopped
