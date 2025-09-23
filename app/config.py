@@ -7,6 +7,9 @@ MODEL_BERT = "bert-base-uncased"
 MODEL_DINO = "dinov2_vitb14"
 TRIOTON_MODEL_DINO = "facebook/dinov2-base"
 
+# Temporary upload dir
+IMG_UPLOAD_DIR = os.getenv("IMG_UPLOAD_DIR", "/app/uploads")
+
 # SAMPLE_SIZE must be greater than 0
 SAMPLE_SIZE = int(os.getenv("SAMPLE_SIZE", "50"))
 

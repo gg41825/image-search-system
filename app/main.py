@@ -1,7 +1,10 @@
 import os
 import json
-from typing import Optional
-from fastapi import FastAPI, Query
+import shutil, os, uuid
+
+from fastapi import FastAPI, UploadFile, File, Form
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse, JSONResponse, HTMLResponse
 
 import config
 from pipeline.apis import run_search
@@ -16,6 +19,20 @@ os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"
 
 app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="frontend", html=True), name="frontend")
+
+@app.get("/")
+def read_homepage():
+    homepage_path = os.path.join("frontend", "index.html")
+    not_found_path = os.path.join("frontend", "not_found.html")
+
+    if os.path.exists(homepage_path):
+        return FileResponse(homepage_path)
+    elif os.path.exists(not_found_path):
+        return FileResponse(not_found_path, status_code=404)
+    else:
+        return HTMLResponse("<h1>404 Not Found</h1>", status_code=404)
 
 @app.on_event("startup")
 def seed_db():
@@ -42,11 +59,42 @@ def seed_db():
 
     print(f"✅ Seeding finished.\nIndex saved at {config.INDEX_PATH}\n✅ id_map and dim saved at {config.ID_MAP_PATH} (dim={dim})")
 
-@app.get("/search")
-def search(
-    query_text: Optional[str] = Query(None, description="Text query for product search"),
-    image_url: str = Query(..., description="Image URL for product search"),
-    embedder: str = Query("local", description="Choose between 'local' or 'triton'")
+@app.post("/search")
+async def search(
+    file: UploadFile = File(None),
+    image_url: str = Form(None),
+    query_text: str = Form(""),
+    embedder: str = Form("local")
 ):
-    results = run_search(query_text=query_text, query_image_url=image_url, embedder_type=embedder)
+    """
+    - If `file` is provided → save locally and generate a temp URL/path
+    - If `image_url` is provided → use directly
+    - At least one of them must exist
+    """
+    final_url = None
+    tmp_upload_dir = config.IMG_UPLOAD_DIR
+    os.makedirs(tmp_upload_dir, exist_ok=True)
+
+    # Handle uploaded file
+    if file:
+        filename = f"{uuid.uuid4().hex}_{file.filename}"
+        filepath = os.path.join(tmp_upload_dir, filename)
+        with open(filepath, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        final_url = filepath
+
+    # Handle URL
+    elif image_url:
+        final_url = image_url
+
+    else:
+        return JSONResponse({"error": "Please provide either an image file or image_url"}, status_code=400)
+
+    # Run your search pipeline
+    results = run_search(
+        query_text=query_text,
+        query_image_url=final_url,
+        embedder_type=embedder
+    )
+
     return results
