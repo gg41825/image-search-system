@@ -1,4 +1,4 @@
-venv/*
+app/venv/*
 .DS_Store
 *.pyc
 model_repository/*/1/model.onnx

@@ -1,7 +1,8 @@
+import datetime
 from typing import List, Dict, Optional
 from pymongo import MongoClient, errors
+
 import config
-import datetime
 
 class MongoDBHandler:
     """MongoDB handler for managing products and logs collections."""

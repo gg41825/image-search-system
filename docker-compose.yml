@@ -29,14 +29,25 @@ services:
       - ./model_repository:/models
 
   app:
-    build: ./app
+    build:
+      context: ./app
+      dockerfile: Dockerfile
     container_name: sereact_app
     environment:
       - MONGO_URI=mongodb://root:iamtestginny@mongodb:27017
-      - TRITON_URL=triton:8001
+      - TRITON_URL=http://triton:8000
+      - SAMPLE_SIZE=60
+      - INDEX_PATH=/app/data/aligned_index.ann
+      - ID_MAP_PATH=/app/data/id_map.json
+    ports:
+      - "8080:8080"
     volumes:
       - ./app:/app
     depends_on:
       - mongodb
       - triton
     restart: unless-stopped
+
+
+volumes:
+  mongo_data:

@@ -1,6 +1,5 @@
 from typing import List, Optional
 import numpy as np
-import torch
 from models.base_embedder import BaseEmbedder
 from models.bert_embedder import BERTEmbedder
 from models.dino_embedder import DINOv2Embedder
