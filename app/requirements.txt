@@ -9,3 +9,6 @@ requests==2.32.3
 onnx==1.15.0
 beautifulsoup4==4.13.5
 annoy==1.17.3
+fastapi==0.117.1
+uvicorn[standard]
+python-multipart==0.0.12

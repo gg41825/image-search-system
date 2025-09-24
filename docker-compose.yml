@@ -1,0 +1,57 @@
+version: "3.9"
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=iamtestginny
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo_data:/data/db
+
+  triton:
+    image: nvcr.io/nvidia/tritonserver:23.10-py3
+    container_name: triton
+    restart: unless-stopped
+    command: >
+      tritonserver
+      --model-repository=/models
+      --disable-auto-complete-config
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+      - "8002:8002"
+    volumes:
+      - ./model_repository:/models
+
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    image: ginny/image-search-app:1.0.0
+    container_name: image-search-system
+    environment:
+      - DEV_MODE=0
+      - MONGO_URI=mongodb://root:iamtestginny@mongodb:27017
+      - TRITON_URL=http://triton:8000
+      - IMG_UPLOAD_DIR=/app/uploads
+      - SAMPLE_SIZE=100
+      - INDEX_PATH=/app/data/aligned_index.ann
+      - ID_MAP_PATH=/app/data/id_map.json
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./app:/app
+      - ./frontend:/frontend
+    depends_on:
+      - mongodb
+      - triton
+    restart: unless-stopped
+
+
+volumes:
+  mongo_data:

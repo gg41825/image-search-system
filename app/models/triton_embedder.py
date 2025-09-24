@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import requests
 from transformers import BertTokenizer, AutoImageProcessor
@@ -16,25 +17,31 @@ class TritonEmbedder:
         self.infer_url = f"{self.url}/v2/models/{self.model_name}/infer"
 
         # Local preprocessing tools
-        # Hugging Face tokenizer for text (BERT-based)
         self.tokenizer = BertTokenizer.from_pretrained(config.MODEL_BERT)
-        # Hugging Face image processor (e.g., DINOv2 preprocessor)
         self.image_processor = AutoImageProcessor.from_pretrained(config.TRIOTON_MODEL_DINO)
 
-    def embed(self, text: str, image_url: str) -> np.ndarray:
+    def _load_image(self, path_or_url: str) -> Image.Image:
+        """Support both local file path and HTTP URL"""
+        if path_or_url.startswith("http://") or path_or_url.startswith("https://"):
+            return Image.open(requests.get(path_or_url, stream=True).raw).convert("RGB")
+        elif os.path.exists(path_or_url):
+            return Image.open(path_or_url).convert("RGB")
+        else:
+            raise ValueError(f"❌ Invalid image path or URL: {path_or_url}")
+
+    def embed(self, text: str, image_path_or_url: str) -> np.ndarray:
         """
         Generate aligned embedding by sending inputs to Triton.
 
         Args:
             text (str): The input text string for BERT.
-            image_url (str): The image URL for DINOv2.
+            image_path_or_url (str): Either a local path or HTTP URL for DINOv2.
 
         Returns:
             np.ndarray: A 2D numpy array of shape [1, embedding_dim].
         """
 
         # --- Preprocess text ---
-        # Tokenize text into input_ids and attention_mask (numpy format, int64)
         tokens = self.tokenizer(
             text,
             return_tensors="np",
@@ -46,13 +53,10 @@ class TritonEmbedder:
         attention_mask = tokens["attention_mask"].astype("int64")
 
         # --- Preprocess image ---
-        # Download and convert image to RGB
-        image = Image.open(requests.get(image_url, stream=True).raw).convert("RGB")
-        # Use Hugging Face processor to normalize and resize image to tensor
+        image = self._load_image(image_path_or_url)
         pixel_values = self.image_processor(images=image, return_tensors="np")["pixel_values"].astype("float32")
 
         # --- Triton payload ---
-        # Build inference request payload following Triton HTTP/JSON protocol
         payload = {
             "inputs": [
                 {
@@ -77,11 +81,8 @@ class TritonEmbedder:
             "outputs": [{"name": "embedding"}]
         }
 
-        # --- Send request ---
-        # Call Triton inference API
         resp = requests.post(self.infer_url, json=payload)
         resp.raise_for_status()
         result = resp.json()["outputs"][0]["data"]
 
-        # Convert flat list back into numpy array [1, dim]
         return np.array(result).reshape(1, -1)

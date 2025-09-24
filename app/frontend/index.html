@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Visual+Text Search</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Visual + Text Search</h1>
+
+     <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-tab="upload">Upload</button>
+      <button class="tab" data-tab="url">Import from URL</button>
+    </div>
+
+    <!-- Upload Area -->
+    <div id="uploadTab" class="tab-content active">
+      <div id="drop-area" class="drop-area">
+        <input type="file" id="fileInput" hidden accept="image/*">
+        <button id="uploadBtn">+ Upload an Image</button>
+        <p>or drag and drop an image here</p>
+        <img id="preview" class="preview" src="/static/placeholder.png" style="display:none;" />
+      </div>
+      <p id="fileName" class="file-name">No file selected</p>
+    </div>
+
+    <!-- URL Area -->
+    <div id="urlTab" class="tab-content">
+      <label for="image_url">Image URL: </label>
+      <input type="text" id="image_url" class="styled-input" placeholder="https://example.com/image.jpg">
+      <img id="urlPreview" class="preview" style="display:none;" />
+    </div>
+
+    <!-- Text input -->
+    <div class="row">
+      <label for="query_text">Text query (optional):</label>
+      <input type="text" id="query_text" placeholder="e.g., dark blue jacket">
+    </div>
+
+    <!-- Action buttons -->
+    <div class="actions">
+      <button id="searchBtn">🔍 Search</button>
+      <button id="clearBtn">✖ Clear</button>
+    </div>
+
+    <!-- Result -->
+    <div id="result" class="result">
+      <p>No search yet.</p>
+    </div>
+  </div>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>

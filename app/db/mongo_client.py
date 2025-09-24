@@ -1,7 +1,8 @@
+import datetime
 from typing import List, Dict, Optional
 from pymongo import MongoClient, errors
+
 import config
-import datetime
 
 class MongoDBHandler:
     """MongoDB handler for managing products and logs collections."""
@@ -62,13 +63,14 @@ class MongoDBHandler:
         Returns:
             List[int]: List of randomly sampled product IDs.
         """
-        # Use MongoDB aggregation with $sample to randomly pick documents
-        sample_docs = list(self.products.aggregate([
-            {"$sample": {"size": sample_size}},
-            {"$project": {"id": 1}}  # Only keep the 'id' field
-        ]))
-
-        # Extract 'id' values into a Python list
+        if sample_size <= 0:
+            # Return all product IDs
+            sample_docs = list(self.products.find({}, {"id": 1}))
+        else:
+            sample_docs = list(self.products.aggregate([
+                {"$sample": {"size": sample_size}},
+                {"$project": {"id": 1}}
+            ]))
         return [doc["id"] for doc in sample_docs]
 
     # ---------- Logging Methods ----------
