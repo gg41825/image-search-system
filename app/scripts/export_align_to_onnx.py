@@ -22,8 +22,8 @@ dummy_pixel_values = torch.randn((1, 3, 224, 224)).to(device)
 # ------------------------
 # Export to ONNX
 # ------------------------
-# Make sure Triton model_repository/aligned/1 exists
-output_dir = os.path.join(os.path.dirname(__file__), "../../model_repository/aligned/1")
+# Make sure run this script under the root directory
+output_dir = os.path.join("model_repository", "aligned", "1")
 os.makedirs(output_dir, exist_ok=True)
 
 onnx_path = os.path.join(output_dir, "model.onnx")

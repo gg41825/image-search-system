@@ -25,7 +25,23 @@ git clone https://github.com/<your-repo>.git
 cd <your-repo>
 ```
 
-## 2. Build and start all services
+## 2. Export the ONNX model for Triton
+
+Before starting Triton, you need to export the aligned BERT+DINOv2 model into ONNX format:
+```bash
+PYTHONPATH=./app python app/scripts/export_align_to_onnx.py
+```
+
+Then move the generated model.onnx under:
+```
+model_repository/
+  aligned/
+    1/
+      model.onnx
+    config.pbtxt
+```
+
+## 3. Build and start all services
 ```bash
 docker-compose up --build
 ```
@@ -38,7 +54,7 @@ This will start:
 
 - app (FastAPI) → on port 8080
 
-## 3. Access the system
+## 4. Access the system
 
 API Docs (Swagger UI): 👉 http://localhost:8080/docs
 
