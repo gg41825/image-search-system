@@ -1,5 +1,6 @@
 import os
 
+DEV_MODE = int(os.getenv("DEV_MODE", "0")) # 0: off, 1: on
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://root:iamtestginny@localhost:27017")
 MONGO_DB_NAME = "product_db"
 

@@ -50,7 +50,7 @@ def run_search(query_text: str, query_image_url: str, embedder_type: str):
 
     docs = list(mongo.products.find(
         {"id": {"$in": pids}},
-        {"_id": 0, "id": 1, "name": 1, "category": 1, "image_url": 1}
+        {"_id": 0, "id": 1, "name": 1, "category": 1, "price": 1, "image_url": 1}
     ))
     doc_map = {doc["id"]: doc for doc in docs}
 
@@ -64,6 +64,7 @@ def run_search(query_text: str, query_image_url: str, embedder_type: str):
               "id": doc["id"],
               "name": doc.get("name"),
               "category": doc.get("category"),
+              "price": doc.get("price"),
               "image_url": doc.get("image_url"),
               "distance": round(dist, 4)
           }
@@ -71,6 +72,7 @@ def run_search(query_text: str, query_image_url: str, embedder_type: str):
               f" - ID: {result['id']}, "
               f"Name: {result['name']}, "
               f"Category: {result['category']}, "
+              f"Price: {result['price']}, "
               f"Image: {result['image_url']}, "
               f"Distance={result['distance']}"
           )

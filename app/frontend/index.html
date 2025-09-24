@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sereact – Visual+Text Search</title>
+  <title>Visual+Text Search</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="/static/style.css">
 </head>
@@ -22,7 +22,7 @@
         <input type="file" id="fileInput" hidden accept="image/*">
         <button id="uploadBtn">+ Upload an Image</button>
         <p>or drag and drop an image here</p>
-        <img id="preview" class="preview" src="placeholder.png" style="display:none;" />
+        <img id="preview" class="preview" src="/static/placeholder.png" style="display:none;" />
       </div>
       <p id="fileName" class="file-name">No file selected</p>
     </div>
@@ -38,15 +38,6 @@
     <div class="row">
       <label for="query_text">Text query (optional):</label>
       <input type="text" id="query_text" placeholder="e.g., dark blue jacket">
-    </div>
-
-    <!-- Embedder selection -->
-    <div class="row">
-      <label for="embedder">Select server:</label>
-      <select id="embedder">
-        <option value="triton">Triton (fast)</option>
-        <option value="local">Local (no server)</option>
-      </select>
     </div>
 
     <!-- Action buttons -->

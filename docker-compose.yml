@@ -32,18 +32,21 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile
-    container_name: search_app
+    image: ginny/image-search-app:1.0.0
+    container_name: image-search-system
     environment:
+      - DEV_MODE=0
       - MONGO_URI=mongodb://root:iamtestginny@mongodb:27017
       - TRITON_URL=http://triton:8000
       - IMG_UPLOAD_DIR=/app/uploads
-      - SAMPLE_SIZE=-1
+      - SAMPLE_SIZE=100
       - INDEX_PATH=/app/data/aligned_index.ann
       - ID_MAP_PATH=/app/data/id_map.json
     ports:
       - "8080:8080"
     volumes:
       - ./app:/app
+      - ./frontend:/frontend
     depends_on:
       - mongodb
       - triton

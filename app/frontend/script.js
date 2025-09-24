@@ -90,7 +90,6 @@ searchBtn.addEventListener("click", () => {
     return;
   }
 
-  fd.append("embedder", embedderSelect.value);
   if (queryText.value.trim()) fd.append("query_text", queryText.value.trim());
 
   result.innerHTML = "<p>⏳ Searching...</p>";
@@ -123,7 +122,7 @@ function showResult(data) {
     result.innerHTML = `
       <h3>Best Match</h3>
       <img src="${best.image_url}" alt="best-match">
-      <p><b>${best.name}</b><br>${best.category}<br>Distance: ${best.distance}</p>
+      <p><b>${best.name}</b><br>${best.category}<br>Price(€): ${best.price}<br>Distance: ${best.distance}</p>
     `;
   } else {
     result.innerHTML = "<p>No result found.</p>";

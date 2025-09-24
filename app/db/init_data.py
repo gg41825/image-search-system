@@ -67,7 +67,7 @@ def seed_product_vectors_aligned(
     num_trees: int = 5,   # smaller = faster build
     alpha: float = 0.5,
     batch_size: int = 32,
-    cache_dir: str = "app/data/cache",
+    cache_dir: str = "data/cache",
     cache_expiry_days: int = 7
 ) -> Tuple[AnnoyIndex, int, Dict[int, str]]:
     """

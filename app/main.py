@@ -2,9 +2,10 @@ import os
 import json
 import shutil, os, uuid
 
-from fastapi import FastAPI, UploadFile, File, Form
+from fastapi import FastAPI, UploadFile, File, Form, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse, HTMLResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 import config
 from pipeline.apis import run_search
@@ -33,7 +34,29 @@ def read_homepage():
         return FileResponse(not_found_path, status_code=404)
     else:
         return HTMLResponse("<h1>404 Not Found</h1>", status_code=404)
+    
+# -------------------------------------------------------------------
+# Global 404 handler
+# -------------------------------------------------------------------
+@app.exception_handler(StarletteHTTPException)
+async def custom_404_handler(request: Request, exc: StarletteHTTPException):
+    """Catch 404 errors and show custom not_found.html if available"""
+    if exc.status_code == 404:
+        not_found_path = os.path.join("frontend", "not_found.html")
+        if os.path.exists(not_found_path):
+            return FileResponse(not_found_path, status_code=404)
+        else:
+            return HTMLResponse("<h1>Oops! 🚀 Page not found</h1>", status_code=404)
+    else:
+        # Other errors keep default JSON
+        return JSONResponse(
+            {"detail": exc.detail},
+            status_code=exc.status_code
+        )
 
+# -------------------------------------------------------------------
+# Startup Event (seed DB + build index)
+# -------------------------------------------------------------------
 @app.on_event("startup")
 def seed_db():
     # Initialize MongoDB connection using custom handler
@@ -64,13 +87,16 @@ async def search(
     file: UploadFile = File(None),
     image_url: str = Form(None),
     query_text: str = Form(""),
-    embedder: str = Form("local")
 ):
     """
     - If `file` is provided → save locally and generate a temp URL/path
     - If `image_url` is provided → use directly
     - At least one of them must exist
     """
+    # Decide embedder mode
+    dev_mode_env = config.DEV_MODE
+    embedder = "local" if dev_mode_env else "triton"
+
     final_url = None
     tmp_upload_dir = config.IMG_UPLOAD_DIR
     os.makedirs(tmp_upload_dir, exist_ok=True)
