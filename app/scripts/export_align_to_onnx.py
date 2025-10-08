@@ -22,12 +22,12 @@ dummy_pixel_values = torch.randn((1, 3, 224, 224)).to(device)
 # ------------------------
 # Export to ONNX
 # ------------------------
-# Make sure run this script under the root directory
-output_dir = os.path.join("model_repository", "aligned", "1")
+
+# Always export to the shared /model_repository path
+output_dir = "/model_repository/aligned/1"
 os.makedirs(output_dir, exist_ok=True)
 
 onnx_path = os.path.join(output_dir, "model.onnx")
-
 torch.onnx.export(
     model,
     (dummy_input_ids, dummy_attention_mask, dummy_pixel_values),

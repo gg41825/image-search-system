@@ -42,7 +42,7 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile
-    image: ginny/image-search-app:1.0.0
+    image: image-search-app:1.0.0
     container_name: image-search-system
     environment:
       - DEV_MODE=0
