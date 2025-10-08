@@ -48,8 +48,8 @@ services:
       - DEV_MODE=0
       - MONGO_URI=mongodb://root:iamtestginny@mongodb:27017
       - TRITON_URL=http://triton:8000
-      - IMG_UPLOAD_DIR=/app/uploads
-      - SAMPLE_SIZE=-1
+      - IMG_UPLOAD_DIR=/app/data/uploads
+      - SAMPLE_SIZE=20
       - INDEX_PATH=/app/data/aligned_index.ann
       - ID_MAP_PATH=/app/data/id_map.json
     ports:

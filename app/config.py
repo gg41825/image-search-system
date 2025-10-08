@@ -9,7 +9,7 @@ MODEL_DINO = "dinov2_vitb14"
 TRIOTON_MODEL_DINO = "facebook/dinov2-base"
 
 # Temporary upload dir
-IMG_UPLOAD_DIR = os.getenv("IMG_UPLOAD_DIR", "/app/uploads")
+IMG_UPLOAD_DIR = os.getenv("IMG_UPLOAD_DIR", "/app/data/uploads")
 
 # SAMPLE_SIZE must be greater than 0, or will take all products
 SAMPLE_SIZE = int(os.getenv("SAMPLE_SIZE", "50"))
