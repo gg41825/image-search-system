@@ -3,3 +3,4 @@ app/venv/*
 *.pyc
 model_repository/*/1/model.onnx
 mongo_data/*
+app/data/cache/*

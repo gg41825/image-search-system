@@ -68,7 +68,7 @@ def seed_product_vectors_aligned(
     alpha: float = 0.5,
     batch_size: int = 32,
     cache_dir: str = "data/cache",
-    cache_expiry_days: int = 7
+    cache_expiry_days: int = 30
 ) -> Tuple[AnnoyIndex, int, Dict[int, str]]:
     """
     Build an Annoy index by aligning BERT (text) and DINO (image) embeddings.

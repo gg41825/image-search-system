@@ -68,6 +68,7 @@ def seed_db():
 
     # Fetch a list of product IDs (optionally sampled for testing/debugging)
     sample_ids = mongo.get_sample_ids(sample_size=config.SAMPLE_SIZE)
+    print(f"🌟 Sample Size: {config.SAMPLE_SIZE}")
 
     # Build Annoy index by combining BERT (text) and DINO (image) embeddings
     # Returns: AnnoyIndex, embedding dimension, and id_map (Annoy internal ID -> product ID)

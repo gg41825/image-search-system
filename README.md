@@ -10,6 +10,63 @@ This project demonstrates a **multimodal product search system**:
 Imagine shopping online. You upload a photo of your hiking jacket and type *“dark blue jacket”* → the system retrieves the most relevant product from the catalog.
 
 ---
+# 🐍 Local Development (Optional)
+If you prefer to run the project locally without Docker:
+## 1. If you prefer to run the project locally without Docker:
+```bash
+python3 -m venv venv
+source venv/bin/activate   # Mac/Linux
+venv\Scripts\activate      # Windows
+```
+
+## 2. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+
+## 3. Make entrypoint.sh executable (first time only)
+```bash
+chmod +x ./entrypoint.sh
+```
+
+## 4. Export the ONNX model (via entrypoint.sh)
+```bash
+./entrypoint.sh true
+```
+
+It will generate model.onnx under `model_repository/aligned/1`:
+```
+model_repository/
+  aligned/
+    1/
+      model.onnx
+    config.pbtxt
+```
+
+## 4. Start MongoDB and Triton manually with Docker
+
+```bash
+docker run -d --name mongodb \
+  -p 27017:27017 \
+  -v ~/mongo_data:/data/db \
+  -e MONGO_INITDB_ROOT_USERNAME=root \
+  -e MONGO_INITDB_ROOT_PASSWORD=iamtestginny \
+  mongo:7.0
+```
+
+```bash
+docker run --rm -it -p 8000:8000 -p 8001:8001 -p 8002:8002 \
+  -v "$(pwd)/model_repository:/models" \
+  nvcr.io/nvidia/tritonserver:23.10-py3 \
+  tritonserver --model-repository=/models --disable-auto-complete-config
+```
+
+## 5. Run the app
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload
+```
+
+---
 
 # 🚀 Deployment with Docker Compose
 
@@ -25,25 +82,9 @@ git clone https://github.com/<your-repo>.git
 cd <your-repo>
 ```
 
-## 2. Export the ONNX model for Triton
-
-Before starting Triton, you need to export the aligned BERT+DINOv2 model into ONNX format:
+## 2. Build and start all services
 ```bash
-PYTHONPATH=./app python app/scripts/export_align_to_onnx.py
-```
-
-Then move the generated model.onnx under:
-```
-model_repository/
-  aligned/
-    1/
-      model.onnx
-    config.pbtxt
-```
-
-## 3. Build and start all services
-```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 This will start:
@@ -54,7 +95,7 @@ This will start:
 
 - app (FastAPI) → on port 8080
 
-## 4. Access the system
+## 3. Access the system
 
 API Docs (Swagger UI): 👉 http://localhost:8080/docs
 
