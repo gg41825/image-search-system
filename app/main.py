@@ -11,6 +11,7 @@ import config
 from pipeline.apis import run_search
 from db.mongo_client import MongoDBHandler
 from db.init_data import seed_products, seed_product_vectors_aligned
+from utils.logging_utils import with_logging
 
 # -------------------------------------------------------------------
 # Environment settings for stability (macOS M1/M2 + CPU)
@@ -58,6 +59,7 @@ async def custom_404_handler(request: Request, exc: StarletteHTTPException):
 # Startup Event (seed DB + build index)
 # -------------------------------------------------------------------
 @app.on_event("startup")
+@with_logging("startup_seed_db")
 def seed_db():
     # Initialize MongoDB connection using custom handler
     mongo = MongoDBHandler()
@@ -84,6 +86,7 @@ def seed_db():
     print(f"✅ Seeding finished.\nIndex saved at {config.INDEX_PATH}\n✅ id_map and dim saved at {config.ID_MAP_PATH} (dim={dim})")
 
 @app.post("/search")
+@with_logging("search_request")
 async def search(
     file: UploadFile = File(None),
     image_url: str = Form(None),
