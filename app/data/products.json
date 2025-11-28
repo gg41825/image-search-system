@@ -392,13 +392,6 @@
     "id": 48
   },
   {
-    "image_file": "49.jpg",
-    "status": "error",
-    "error": "Invalid operation: The `response.parts` quick accessor requires a single candidate, but but `response.candidates` is empty.\nThis appears to be caused by a blocked prompt, see `response.prompt_feedback`: block_reason: OTHER\n",
-    "image_url": "https://pub-6cf2f88db8f14219bf79c4d284c2c63e.r2.dev/49.jpg",
-    "id": 49
-  },
-  {
     "name": "Black Lace G-String with Crotch Opening",
     "category": "Lingerie",
     "image_file": "50.jpg",
@@ -759,13 +752,6 @@
     "id": 94
   },
   {
-    "image_file": "95.jpg",
-    "status": "error",
-    "error": "Invalid operation: The `response.parts` quick accessor requires a single candidate, but but `response.candidates` is empty.\nThis appears to be caused by a blocked prompt, see `response.prompt_feedback`: block_reason: OTHER\n",
-    "image_url": "https://pub-6cf2f88db8f14219bf79c4d284c2c63e.r2.dev/95.jpg",
-    "id": 95
-  },
-  {
     "name": "Navy Blue T-shirt Dress",
     "category": "Dresses",
     "image_file": "96.jpg",
@@ -934,13 +920,6 @@
     "id": 116
   },
   {
-    "image_file": "117.jpg",
-    "status": "error",
-    "error": "Invalid operation: The `response.parts` quick accessor requires a single candidate, but but `response.candidates` is empty.\nThis appears to be caused by a blocked prompt, see `response.prompt_feedback`: block_reason: OTHER\n",
-    "image_url": "https://pub-6cf2f88db8f14219bf79c4d284c2c63e.r2.dev/117.jpg",
-    "id": 117
-  },
-  {
     "name": "Men's Shiny Zipper Boxer Briefs",
     "category": "Men's Underwear",
     "image_file": "118.jpg",
@@ -1003,13 +982,6 @@
     "status": "success",
     "image_url": "https://pub-6cf2f88db8f14219bf79c4d284c2c63e.r2.dev/125.jpg",
     "id": 125
-  },
-  {
-    "image_file": "126.jpg",
-    "status": "error",
-    "error": "Invalid operation: The `response.parts` quick accessor requires a single candidate, but but `response.candidates` is empty.\nThis appears to be caused by a blocked prompt, see `response.prompt_feedback`: block_reason: OTHER\n",
-    "image_url": "https://pub-6cf2f88db8f14219bf79c4d284c2c63e.r2.dev/126.jpg",
-    "id": 126
   },
   {
     "name": "Sexy Maid Lingerie Set",
@@ -1348,13 +1320,6 @@
     "id": 168
   },
   {
-    "image_file": "169.jpg",
-    "status": "error",
-    "error": "Invalid operation: The `response.parts` quick accessor requires a single candidate, but but `response.candidates` is empty.\nThis appears to be caused by a blocked prompt, see `response.prompt_feedback`: block_reason: OTHER\n",
-    "image_url": "https://pub-6cf2f88db8f14219bf79c4d284c2c63e.r2.dev/169.jpg",
-    "id": 169
-  },
-  {
     "name": "Festina Men's Classic Black Dial Watch",
     "category": "Watches",
     "image_file": "170.jpg",
@@ -1537,13 +1502,6 @@
     "status": "success",
     "image_url": "https://pub-6cf2f88db8f14219bf79c4d284c2c63e.r2.dev/192.jpg",
     "id": 192
-  },
-  {
-    "image_file": "193.jpg",
-    "status": "error",
-    "error": "Invalid operation: The `response.parts` quick accessor requires a single candidate, but but `response.candidates` is empty.\nThis appears to be caused by a blocked prompt, see `response.prompt_feedback`: block_reason: OTHER\n",
-    "image_url": "https://pub-6cf2f88db8f14219bf79c4d284c2c63e.r2.dev/193.jpg",
-    "id": 193
   },
   {
     "name": "Men's Firefighter Costume Briefs",
