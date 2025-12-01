@@ -49,14 +49,15 @@ services:
       - MONGO_URI=mongodb://root:YOUR_MONGO_PASSWORD@mongodb:27017/admin
       - TRITON_URL=http://triton:8000
       - IMG_UPLOAD_DIR=/app/data/uploads
-      - SAMPLE_SIZE=20
-      - INDEX_PATH=/app/data/aligned_index.ann
-      - ID_MAP_PATH=/app/data/id_map.json
+      - SAMPLE_SIZE=-1
+      - INDEX_PATH=/app/data/cache/aligned_index.ann
+      - ID_MAP_PATH=/app/data/cache/id_map.json
     ports:
       - "8080:8080"
     volumes:
       - ./model_repository:/model_repository  # App writes exported ONNX here so Triton can read it
-      - ./app/frontend:/app/frontend                  # Serve static frontend from the container
+      - ./app/frontend:/app/frontend          # Serve static frontend from the container
+      - ./app/data/cache:/app/data/cache    # Cache data persists in the project folder even after restarts
     depends_on:
       - mongodb
     restart: unless-stopped
