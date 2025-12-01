@@ -121,8 +121,14 @@ function showResult(data) {
     const best = data.results[0];
     result.innerHTML = `
       <h3>Best Match</h3>
-      <img src="${best.image_url}" alt="best-match">
-      <p><b>${best.name}</b><br>${best.category}<br>Distance: ${best.distance}</p>
+      <div style="max-width: 300px; margin: 0 auto; text-align: left;">
+          <img src="${best.image_url}" alt="best-match" style="width: 100%; height: auto; display: block;">
+          <p style="margin-top: 1rem;">
+              <b>${best.name}</b><br>
+              Category: ${best.category}<br>
+              Similarity: ${best.similarity * 100}%
+          </p>
+      </div>
     `;
   } else {
     result.innerHTML = "<p>No result found.</p>";

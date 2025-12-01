@@ -9,7 +9,7 @@ GLAMI_DATA_DIR = "YOUR_SOURCE_IMG_DIR"
 
 # Mongo
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://root:{YOUR_MONGO_PASSWORD}@localhost:27017")
-MONGO_DB_NAME = "product_db"
+MONGO_DB_NAME = "products"
 
 # Model
 MODEL_BERT = "bert-base-uncased"
@@ -27,5 +27,5 @@ TRITON_URL = os.getenv("TRITON_URL", "http://localhost:8000")
 TRITON_MODEL_NAME = "aligned"
 
 # Path for Annoy index and id_map
-INDEX_PATH = os.getenv("INDEX_PATH", "/app/data/aligned_index.ann")
-ID_MAP_PATH = os.getenv("ID_MAP_PATH", "/app/data/id_map.json")
+INDEX_PATH = os.getenv("INDEX_PATH", "/app/data/cache/aligned_index.ann")
+ID_MAP_PATH = os.getenv("ID_MAP_PATH", "/app/data/cache/id_map.json")

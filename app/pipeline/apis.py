@@ -69,13 +69,10 @@ async def run_search(query_text: str, query_image_url: str, embedder_type: str):
     nn_indices, distances = index.get_nns_by_vector(
         query_combined[0].tolist(), top_k, include_distances=True
     )
-
-    print(f'nn_indices: {nn_indices}, distances:{distances}')
     pids = [id_map[idx] for idx in nn_indices]
 
     # Fetch product metadata from MongoDB
     def fetch_mongo_products(pids_list):
-        print(f'pids_list in fetch_mongo_products: {pids_list}')
         # Fetch product metadata from MongoDB (Blocking Network I/O)
         return list(mongo.products.find(
             {"id": {"$in": pids_list}},
@@ -86,6 +83,9 @@ async def run_search(query_text: str, query_image_url: str, embedder_type: str):
     doc_map = {doc["id"]: doc for doc in docs}
     results = []
     for idx, dist in zip(nn_indices, distances):
+        # Convert distance to similarity for Angular distance: s = 1 - (d^2 / 2)
+        similarity = round(1 - (dist * dist) / 2, 4) 
+        
         pid = id_map[idx]
         doc = doc_map[pid]
         if doc:
@@ -94,14 +94,14 @@ async def run_search(query_text: str, query_image_url: str, embedder_type: str):
               "name": doc.get("name"),
               "category": doc.get("category"),
               "image_url": doc.get("image_url"),
-              "distance": round(dist, 4)
+              "similarity": similarity
           }
           print(
               f"ID: {result['id']}, "
               f"Name: {result['name']}, "
               f"Category: {result['category']}, "
               f"Image: {result['image_url']}, "
-              f"Distance={result['distance']}"
+              f"Similarity={result['similarity']}"
           )
           results.append(result)
 
