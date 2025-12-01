@@ -21,7 +21,7 @@ async def run_search(query_text: str, query_image_url: str, embedder_type: str):
     Returns:
         Dict: A dictionary containing the search results.
     """
-    async def load_index_data():
+    def load_index_data():
         # 1. Load Annoy index metadata (Blocking File I/O)
         with open(config.ID_MAP_PATH, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -44,7 +44,7 @@ async def run_search(query_text: str, query_image_url: str, embedder_type: str):
         sys.exit(1)
 
     # Function to run the embedding logic synchronously in a thread
-    async def get_embeddings():
+    def get_embeddings():
         if embedder_type == "local":
             print("Using Local Embedder")
             embedder = LocalEmbedder()
@@ -69,10 +69,13 @@ async def run_search(query_text: str, query_image_url: str, embedder_type: str):
     nn_indices, distances = index.get_nns_by_vector(
         query_combined[0].tolist(), top_k, include_distances=True
     )
-    pids = [str(id_map[idx]) for idx in nn_indices]
+
+    print(f'nn_indices: {nn_indices}, distances:{distances}')
+    pids = [id_map[idx] for idx in nn_indices]
 
     # Fetch product metadata from MongoDB
-    async def fetch_mongo_products(pids_list):
+    def fetch_mongo_products(pids_list):
+        print(f'pids_list in fetch_mongo_products: {pids_list}')
         # Fetch product metadata from MongoDB (Blocking Network I/O)
         return list(mongo.products.find(
             {"id": {"$in": pids_list}},
@@ -80,13 +83,11 @@ async def run_search(query_text: str, query_image_url: str, embedder_type: str):
         ))
         
     docs = await asyncio.to_thread(fetch_mongo_products, pids)
-
     doc_map = {doc["id"]: doc for doc in docs}
-    print("Query results:")
     results = []
     for idx, dist in zip(nn_indices, distances):
-        pid = str(id_map[idx])
-        doc = doc_map.get(pid)
+        pid = id_map[idx]
+        doc = doc_map[pid]
         if doc:
           result = {
               "id": doc["id"],
@@ -96,7 +97,7 @@ async def run_search(query_text: str, query_image_url: str, embedder_type: str):
               "distance": round(dist, 4)
           }
           print(
-              f" - ID: {result['id']}, "
+              f"ID: {result['id']}, "
               f"Name: {result['name']}, "
               f"Category: {result['category']}, "
               f"Image: {result['image_url']}, "

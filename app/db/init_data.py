@@ -78,7 +78,7 @@ def seed_product_vectors_aligned(
         raise RuntimeError("No products found for BERT embedding")
 
     texts = [f"{d['name']} {d['category']}" for d in docs_text]
-    ids = [str(d["id"]) for d in docs_text]
+    ids = [d["id"] for d in docs_text]
 
     docs_img = list(mongo.products.find(
         {"id": {"$in": sample_ids}},

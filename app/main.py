@@ -65,7 +65,7 @@ def seed_db():
     mongo = MongoDBHandler()
 
     # Seed products collection in MongoDB. Drops existing data if force_drop=True.
-    seed_products(mongo, force_drop=True)
+    seed_products(mongo)
 
     # Fetch product IDs for indexing (optionally sampled)
     sample_ids = mongo.get_sample_ids(sample_size=config.SAMPLE_SIZE)
@@ -109,6 +109,7 @@ async def search(
         file_content = await file.read()
         async with aiofiles.open(filepath, "wb") as buffer:
             await buffer.write(file_content)
+        final_url = filepath
 
     # If users use the url for searching an image, use it directly
     # Things can be enhanced: check if the url is safe
