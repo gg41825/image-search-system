@@ -40,6 +40,9 @@ API Docs (Swagger UI): 👉 http://localhost:8080/docs
 Frontend (demo UI): 👉 http://localhost:8080/
 
 ## 4. Live Demo
+This project is deployed on Google Cloud Run, making it fully serverless and scalable.
+You can try the live demo here:
+[Live Demo on Cloud Run](https://image-search-system-495449323600.europe-west1.run.app/)
 ![Demo GIF showing the search process](demo.gif)
 
 # ⚙️ How it Works
