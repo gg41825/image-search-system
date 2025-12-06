@@ -13,10 +13,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project files
 COPY . .
 
-# Ensure permissions and line breaks
-RUN sed -i 's/\r$//' /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+# Cloud Run sets PORT env var, default to 8080
+ENV PORT=8080
 
 # Use the absolute path as ENTRYPOINT
 ENTRYPOINT ["/app/entrypoint.sh"]
 
+# Start uvicorn server
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]

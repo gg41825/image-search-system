@@ -6,3 +6,4 @@ mongo_data/*
 app/data/cache/*
 GLAMI-1M-dataset/*
 app/data/image_source/*
+service.yaml
