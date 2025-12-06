@@ -2,50 +2,28 @@
 This project demonstrates a **multimodal product search system**:  
 - You provide either an image (mandatory, can be uploaded from local device or via URL) and/or a text query (optional). 
 - The system performs a **nearest neighbor search** in a **vector database** built with [Annoy](https://github.com/spotify/annoy).  
-- It combines BERT (text embeddings) + DINOv2 (image embeddings), aligned via ONNX/Triton Inference Server for fast inference. (The source images are from [GLAMI-1M](https://github.com/glami/glami-1m))
-- The best-matching product metadata (from **MongoDB**) is returned.  
+- It combines BERT (text embeddings) + DINOv2 (image embeddings), both running directly in PyTorch for fast inference. (The source images are from [GLAMI-1M](https://github.com/glami/glami-1m))
+- The best-matching product metadata (from MongoDB Atlas) is returned.
 
 ---
-# 🚀 Deployment with Docker Compose
 
-We provide a `docker-compose.yml` that runs the whole pipeline:
+# 🚀 Live Deployment
+The entire pipeline is deployed as a single Cloud Run service:
 
-- **MongoDB** → Stores product metadata and vectors.  
-- **Triton Inference Server** → Runs the ONNX model for fast aligned embedding.  
-- **App (FastAPI)** → Handles API requests and frontend.  
+- API + frontend + model inference run in one container
+- MongoDB uses a free online cluster (MongoDB Atlas)
+- Fully serverless and scalable
 
-## 1. Clone the repository
-```bash
-git clone https://github.com/<your-repo>.git
-cd <your-repo>
-```
-
-## 2. Build and start all services
-```bash
-docker compose up --build
-```
-
-This will start:
-
-- mongodb → on port 27017
-
-- triton → on ports 8000, 8001, 8002
-
-- app (FastAPI) → on port 8080
-
-## 3. Access the system
-
-API Docs (Swagger UI): 👉 http://localhost:8080/docs
-
-Frontend (demo UI): 👉 http://localhost:8080/
-
-## 4. Live Demo
+You can try the live demo here:
+[Live Demo on Cloud Run](https://image-search-system-495449323600.europe-west1.run.app/)
 ![Demo GIF showing the search process](demo.gif)
+
+---
 
 # ⚙️ How it Works
 ### 1. Data
 
-Products (brand, title, category, image) are stored in MongoDB.
+Products (name, category, image) are stored in MongoDB Atlas.
 
 Example:
 ```bash
@@ -79,7 +57,7 @@ API `/search` accepts:
 
 Example request:
 ```bash
-curl -X POST "http://localhost:8080/search" \
+curl -X POST "https://<your-cloud-run-url>/search" \
   -F "image_url=https://pub-xxx.r2.dev/1.jpg" \
   -F "query_text=dark blue jacket"
 ```
@@ -98,26 +76,40 @@ Example response:
 }
 ```
 
+---
+
 # 🛠️ Development Notes
 
 - Configuration is set in app/config.py and can be overridden by Docker env variables:
-  - `DEV_MODE`
+  Defined in GitHub Actions secrets:
 
-  - `MONGO_URI`
+  - `GCP_PROJECT_ID` → Google Cloud project ID
 
-  - `TRITON_URL`
+  - `GCP_SA_KEY` → Google Cloud service account key
 
-  - `INDEX_PATH`
+  - `HF_TOKEN` → Hugging Face token for model access
 
-  - `ID_MAP_PATH`
+  - `MONGO_URI` → MongoDB Atlas connection string
+  
+  Defined in Cloud Run:
+  - `DEV_MODE` → Enable development mode
 
-  - `SAMPLE_SIZE` (Indexing sample size. Use a positive integer to index a subset of products, or -1 to index all available products.)
+  - `IMG_UPLOAD_DIR` → Temporary directory for uploaded images
+
+  - `INDEX_PATH` → Path to store Annoy index
+
+  - `ID_MAP_PATH` → Path to store ID mapping
+
+  Defined in GitHub Actions workflow:
+  - `SAMPLE_SIZE` → Number of products to index. Default is 20. Can be modified in deploy.yml (https://github.com/YOUR_USERNAME/YOUR_REPO/actions/workflows/deploy.yml)
 
 - **Frontend** is served via FastAPI static files (`/frontend`).
 
-- **Swagger UI** makes testing APIs easier.
+- [**Swagger UI**](https://image-search-system-495449323600.europe-west1.run.app/docs) makes testing APIs easier.
 
-   ## Disclaimer
+---
+
+   # Disclaimer
    
    This project is for personal or educational use only.
 All product images and data belong to their respective owners.
