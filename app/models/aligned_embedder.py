@@ -27,11 +27,11 @@ class AlignedEmbedder(nn.Module):
                  vision_model_name: str = "facebook/dinov2-base"):
         super().__init__()
 
-        # --- Text encoder (BERT) ---
+        # Text encoder (BERT)
         self.bert = BertModel.from_pretrained(text_model_name)
         self.tokenizer = BertTokenizer.from_pretrained(text_model_name)
 
-        # --- Vision encoder (DINOv2) ---
+        # Vision encoder (DINOv2)
         self.dino = AutoModel.from_pretrained(vision_model_name)
         self.image_processor = AutoImageProcessor.from_pretrained(vision_model_name)
 
@@ -48,15 +48,15 @@ class AlignedEmbedder(nn.Module):
             torch.Tensor: Concatenated embedding [B, 1536].
         """
 
-        # --- Text embedding (CLS token from BERT) ---
+        # Text embedding (CLS token from BERT)
         bert_out = self.bert(input_ids=input_ids, attention_mask=attention_mask)
         bert_cls = bert_out.last_hidden_state[:, 0, :]  # [B, 768]
 
-        # --- Image embedding (CLS token from DINOv2) ---
+        # Image embedding (CLS token from DINOv2)
         dino_out = self.dino(pixel_values=pixel_values)
         dino_cls = getattr(dino_out, "pooler_output", None)
         if dino_cls is None:
             dino_cls = dino_out.last_hidden_state[:, 0, :]  # fallback [B, 768]
 
-        # --- Concatenate embeddings ---
+        # Concatenate embeddings
         return torch.cat([bert_cls, dino_cls], dim=1)  # [B, 1536]

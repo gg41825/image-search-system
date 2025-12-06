@@ -27,7 +27,7 @@ class TritonEmbedder:
         elif os.path.exists(path_or_url):
             return Image.open(path_or_url).convert("RGB")
         else:
-            raise ValueError(f"❌ Invalid image path or URL: {path_or_url}")
+            raise ValueError(f"Invalid image path or URL: {path_or_url}")
 
     def embed(self, text: str, image_path_or_url: str) -> np.ndarray:
         """
@@ -41,7 +41,7 @@ class TritonEmbedder:
             np.ndarray: A 2D numpy array of shape [1, embedding_dim].
         """
 
-        # --- Preprocess text ---
+        # Preprocess text
         tokens = self.tokenizer(
             text,
             return_tensors="np",
@@ -52,11 +52,11 @@ class TritonEmbedder:
         input_ids = tokens["input_ids"].astype("int64")
         attention_mask = tokens["attention_mask"].astype("int64")
 
-        # --- Preprocess image ---
+        # Preprocess image
         image = self._load_image(image_path_or_url)
         pixel_values = self.image_processor(images=image, return_tensors="np")["pixel_values"].astype("float32")
 
-        # --- Triton payload ---
+        # Triton payload
         payload = {
             "inputs": [
                 {
