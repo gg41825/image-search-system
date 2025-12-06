@@ -1,0 +1,66 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - cloud-run-deployment
+  workflow_dispatch:
+    inputs:
+      sample_size:
+        description: 'Sample size for indexing'
+        required: false
+        default: '20'
+        type: string
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: europe-west1
+  SERVICE_NAME: image-search-system
+  IMAGE_NAME: image-search-app
+  REPOSITORY: image-search-repo
+  SAMPLE_SIZE: ${{ github.event.inputs.sample_size || '20' }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: |
+          gcloud auth configure-docker $REGION-docker.pkg.dev
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            --build-arg HF_TOKEN=${{ secrets.HF_TOKEN }} \
+            -t $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:$GITHUB_SHA \
+            -t $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:latest \
+            -f Dockerfile \
+            .
+
+      - name: Push Docker image
+        run: |
+          docker push $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:$GITHUB_SHA
+          docker push $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:latest
+
+      - name: Prepare service.yaml
+        run: |
+          sed "s|DOCKER_IMAGE_PLACEHOLDER|$REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:latest|g" \
+              service.template.yaml > service.yaml
+          sed -i "s|MONGO_URI_PLACEHOLDER|${{ secrets.MONGO_URI }}|g" service.yaml
+          sed -i "s|SAMPLE_SIZE_PLACEHOLDER|${{ env.SAMPLE_SIZE }}|g" service.yaml
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run services replace service.yaml --region=$REGION

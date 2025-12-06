@@ -23,7 +23,7 @@ spec:
         - name: IMG_UPLOAD_DIR
           value: "/tmp/uploads"
         - name: SAMPLE_SIZE
-          value: "20"
+          value: "SAMPLE_SIZE_PLACEHOLDER"
         - name: INDEX_PATH
           value: "/app/data/cache/aligned_index.ann"
         - name: ID_MAP_PATH
