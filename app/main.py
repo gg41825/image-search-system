@@ -2,6 +2,7 @@ import os
 import json
 import shutil, os, uuid
 import aiofiles
+import asyncio
 
 from fastapi import FastAPI, UploadFile, File, Form, Request
 from fastapi.staticfiles import StaticFiles
@@ -55,32 +56,48 @@ async def custom_404_handler(request: Request, exc: StarletteHTTPException):
             {"detail": exc.detail},
             status_code=exc.status_code
         )
+    
+@app.get("/health")
+def health_check():
+    """
+    Health check endpoint that responds immediately
+    """
+    return {"status": "ok", "ready": os.path.exists(config.INDEX_PATH)}
 
-# -------------------------------------------------------------------
-# Startup Event (seed DB + build index)
-# -------------------------------------------------------------------
 @app.on_event("startup")
-@with_logging("startup_seed_db")
-def seed_db():
-    mongo = MongoDBHandler()
-
-    # Seed products collection in MongoDB. Drops existing data if force_drop=True.
-    seed_products(mongo)
-
-    # Fetch product IDs for indexing (optionally sampled)
-    sample_ids = mongo.get_sample_ids(sample_size=config.SAMPLE_SIZE)
-    print(f"Sample Size: {config.SAMPLE_SIZE}")
-
-    # Build Annoy index from combined BERT (text) and DINO (image) embeddings
-    # Returns: AnnoyIndex, embedding dimension (dim), and id_map
-    index, dim, id_map = seed_product_vectors_aligned(mongo, sample_ids=sample_ids)
-
-    # Save index and metadata
-    index.save(config.INDEX_PATH)
-    with open(config.ID_MAP_PATH, "w", encoding="utf-8") as f:
-        json.dump({"id_map": id_map, "dim": dim}, f)
-
-    print(f"Seeding finished.\nIndex saved at {config.INDEX_PATH}\nid_map and dim saved at {config.ID_MAP_PATH} (dim={dim})")
+async def seed_db():
+    """
+    Startup event with timeout handling
+    """
+    
+    print("Application starting...")
+    
+    # Initialize in the backround
+    async def initialize():
+        try:
+            mongo = MongoDBHandler()
+            
+            # Seed products collection
+            seed_products(mongo)
+            
+            # Build index
+            sample_ids = mongo.get_sample_ids(sample_size=config.SAMPLE_SIZE)
+            print(f"Sample Size: {config.SAMPLE_SIZE}")
+            
+            index, dim, id_map = seed_product_vectors_aligned(mongo, sample_ids=sample_ids)
+            
+            # Save index
+            index.save(config.INDEX_PATH)
+            with open(config.ID_MAP_PATH, "w", encoding="utf-8") as f:
+                json.dump({"id_map": id_map, "dim": dim}, f)
+            
+            print(f"Initialization complete. Index saved at {config.INDEX_PATH}")
+        except Exception as e:
+            print(f"Initialization error: {e}")
+    
+    # Run in the background, so that it does not block the main thread
+    asyncio.create_task(initialize())
+    print("Application ready (initialization running in background)")
 
 @app.post("/search")
 @with_logging("search_request")
@@ -92,6 +109,13 @@ async def search(
     """
     At least one of `file` or `image_url` must be provided.
     """
+    # Check if initialization is complete
+    if not os.path.exists(config.INDEX_PATH):
+        return JSONResponse(
+            {"error": "System is still initializing. Please try again in a moment."},
+            status_code=503
+        )
+    
     # Decide embedder mode based on config
     embedder = "local" if config.DEV_MODE else "triton"
 
