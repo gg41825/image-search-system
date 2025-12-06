@@ -39,7 +39,7 @@ class LocalEmbedder(BaseEmbedder):
         batch_size = 0
         parts = []
 
-        # --- Encode text (if provided) ---
+        # Encode text (if provided)
         if texts:
             text_emb = self.bert.embed_texts(texts).cpu().numpy()
             text_emb /= np.linalg.norm(text_emb, axis=1, keepdims=True)
@@ -47,7 +47,7 @@ class LocalEmbedder(BaseEmbedder):
         else:
             text_emb = None
 
-        # --- Encode images (if provided) ---
+        # Encode images (if provided)
         if images:
             img_emb = self.dino.embed_images(images).cpu().numpy()
             img_emb /= np.linalg.norm(img_emb, axis=1, keepdims=True)
@@ -55,11 +55,11 @@ class LocalEmbedder(BaseEmbedder):
         else:
             img_emb = None
 
-        # --- Handle missing modality (pad with zeros) ---
+        # Handle missing modality (pad with zeros)
         if text_emb is None:
             text_emb = np.zeros((batch_size, self.text_dim), dtype=np.float32)
         if img_emb is None:
             img_emb = np.zeros((batch_size, self.image_dim), dtype=np.float32)
 
-        # --- Concatenate embeddings ---
+        # Concatenate embeddings
         return np.concatenate([text_emb, img_emb], axis=1)  # [N, 1536]
