@@ -58,7 +58,7 @@ jobs:
         run: |
           sed "s|DOCKER_IMAGE_PLACEHOLDER|$REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:latest|g" \
               service.template.yaml > service.yaml
-          sed -i "s|MONGO_URI_PLACEHOLDER|${{ secrets.MONGO_URI }}|g" service.yaml
+          sed -i "s|MONGO_URI_PLACEHOLDER|$(printf '%s' "${{ secrets.MONGO_URI }}" | sed 's/&/\\&/g')|g" service.yaml
           sed -i "s|SAMPLE_SIZE_PLACEHOLDER|${{ env.SAMPLE_SIZE }}|g" service.yaml
 
       - name: Deploy to Cloud Run
