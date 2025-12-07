@@ -18,6 +18,68 @@ h1 {
   font-size: 22px;
 }
 
+/* Notice styles */
+.notice {
+  padding: 12px 16px;
+  margin: 16px 0;
+  border-radius: 8px;
+  border-left: 4px solid;
+  animation: slideIn 0.3s ease-out;
+  text-align: left;
+}
+
+.notice.info {
+  background-color: rgba(255, 193, 7, 0.15);
+  border-left-color: #ffc107;
+  color: #ffd54f;
+}
+
+.notice strong {
+  font-weight: 600;
+  color: #fff;
+}
+
+/* Loading indicator */
+.loading {
+  text-align: center;
+  padding: 24px;
+  margin: 16px 0;
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.spinner {
+  border: 4px solid rgba(59, 130, 246, 0.2);
+  border-top: 4px solid #3b82f6;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 12px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.loading p {
+  color: #aaa;
+  margin: 0;
+}
+
 .row {
   margin-top: 20px;
   text-align: left;
@@ -53,11 +115,16 @@ h1 {
   color: #aaa;
   font-weight: bold;
   border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
 }
 
 .tab.active {
   color: #fff;
-  border-bottom: 2px solid #3b82f6; /* blue underline */
+  border-bottom: 2px solid #3b82f6;
+}
+
+.tab:hover {
+  color: #fff;
 }
 
 .tab-content {
@@ -75,12 +142,12 @@ h1 {
   padding: 40px 20px;
   background: rgba(255,255,255,0.05);
   cursor: pointer;
-
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
+  transition: all 0.3s ease;
 }
 
 .drop-area.dragover {
@@ -97,6 +164,12 @@ h1 {
   font-weight: bold;
   cursor: pointer;
   margin-bottom: 10px;
+  transition: all 0.2s ease;
+}
+
+.drop-area button:hover {
+  background: #7c3aed;
+  transform: translateY(-2px);
 }
 
 .preview {
@@ -107,6 +180,7 @@ h1 {
   display: block;
   margin-left: auto;
   margin-right: auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 .file-name {
@@ -134,11 +208,10 @@ h1 {
 
 .styled-input:focus {
   outline: none;
-  border-color: #3b82f6; /* nice blue */
+  border-color: #3b82f6;
   box-shadow: 0 0 10px rgba(59,130,246,0.5);
   background: #2a2a2a;
 }
-
 
 .actions {
   margin-top: 15px;
@@ -153,6 +226,12 @@ h1 {
   border: none;
   cursor: pointer;
   font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.actions button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 #searchBtn {
@@ -160,9 +239,17 @@ h1 {
   color: white;
 }
 
+#searchBtn:hover {
+  background: #16a34a;
+}
+
 #clearBtn {
   background: #ef4444;
   color: white;
+}
+
+#clearBtn:hover {
+  background: #dc2626;
 }
 
 .result {
@@ -170,8 +257,16 @@ h1 {
   padding: 20px;
   border-radius: 12px;
   background: rgba(255,255,255,0.05);
+  min-height: 100px;
 }
+
 .result img {
   max-width: 100%;
   border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.error {
+  color: #ef4444;
+  font-weight: bold;
 }

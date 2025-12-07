@@ -10,6 +10,17 @@
   <div class="container">
     <h1>Visual + Text Search</h1>
 
+    <!-- Cold Start Notice -->
+    <div id="coldStartNotice" class="notice info" style="display:none;">
+      <strong>⏳ First Request Notice:</strong> The system is waking up. This may take 1-2 minutes. Subsequent searches will be much faster!
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="loading" style="display:none;">
+      <div class="spinner"></div>
+      <p>Searching... This may take a moment on the first request.</p>
+    </div>
+
      <!-- Tabs -->
     <div class="tabs">
       <button class="tab active" data-tab="upload">Upload</button>

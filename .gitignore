@@ -1,9 +1,37 @@
-app/venv/*
-.DS_Store
+# Virtual environment
+venv/
+.venv/
+env/
+ENV/
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# But keep example
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
 *.pyc
-model_repository/*/1/model.onnx
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Cloud Run
+service.yaml
+
+# OS
+.DS_Store
+Thumbs.db
+
 mongo_data/*
 app/data/cache/*
-GLAMI-1M-dataset/*
+app/data/uploads/*
 app/data/image_source/*
-service.yaml
